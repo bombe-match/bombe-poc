@@ -138,7 +138,7 @@ class Program
 
         try
         {
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(registryPath))
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(registryPath))
             {
                 if (key == null)
                 {
