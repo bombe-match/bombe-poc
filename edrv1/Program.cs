@@ -22,12 +22,6 @@ namespace EDRPOC
 
         static async Task Main(string[] args)
         {
-            if (!(TraceEventSession.IsElevated() ?? false))
-            {
-                Console.WriteLine("Please run as Administrator");
-                return;
-            }
-
             using (var kernelSession = new TraceEventSession(KernelTraceEventParser.KernelSessionName))
             {
                 Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e) { kernelSession.Dispose(); };
