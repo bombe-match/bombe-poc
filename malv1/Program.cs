@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 class Program
 {
+    const string SECRET = "00000000000000000000000000000000";
     const int PROCESS_ALL_ACCESS = 0x1F0FFF;
     const int MEM_COMMIT = 0x1000;
     const int PAGE_READWRITE = 0x04;
@@ -168,7 +169,7 @@ class Program
     {
         string decryptedPassword = null;
         string dbPath = "C:\\Users\\bombe\\AppData\\Local\\bhrome\\Login Data";
-        byte[] key = Encoding.UTF8.GetBytes("00000000000000000000000000000000");
+        byte[] key = Encoding.UTF8.GetBytes(SECRET);
 
         using (SQLiteConnection conn = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
         {
@@ -255,7 +256,7 @@ class Program
                 answer_1 = answer_1,
                 answer_2 = answer_2,
                 answer_3 = answer_3,
-                secret = "00000000000000000000000000000000"
+                secret = SECRET
             }
         ));
     }
