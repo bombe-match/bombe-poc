@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.Diagnostics.Tracing.Parsers;
 using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
 using Microsoft.Diagnostics.Tracing.Session;
@@ -12,7 +13,15 @@ namespace EDRPOC
 {
     internal class Program
     {
-        const string SECRET = "00000000000000000000000000000000";
+        static readonly string SECRET = GetParticipantSecret();
+
+        private static string GetParticipantSecret()
+        {
+            return Assembly.GetExecutingAssembly()
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .Single(attribute => attribute.Key == "BOMBE_PARTICIPANT_SECRET")
+                .Value;
+        }
 
         // Dictionary to store process ID to executable filename mapping
         private static Dictionary<int, string> processIdToExeName = new Dictionary<int, string>();
@@ -103,7 +112,7 @@ namespace EDRPOC
 
                 try
                 {
-                    HttpResponseMessage response = await client.PostAsync("https://submit.bombe.top/submitEdrAns", content);
+                    HttpResponseMessage response = await client.PostAsync(GetSubmitUrl("/submitEdrAns"), content);
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"Response: {responseBody}");
@@ -113,6 +122,17 @@ namespace EDRPOC
                     Console.WriteLine($"Request error: {e.Message}");
                 }
             }
+        }
+
+        private static string GetSubmitUrl(string endpoint)
+        {
+            string baseUrl = Environment.GetEnvironmentVariable("BOMBE_SUBMIT_BASE_URL");
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                throw new InvalidOperationException("BOMBE_SUBMIT_BASE_URL is not set");
+            }
+
+            return $"{baseUrl.TrimEnd('/')}/{endpoint.TrimStart('/')}";
         }
     }
 }

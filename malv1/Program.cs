@@ -6,14 +6,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Data.SQLite;
 using System.Security.Cryptography;
+using System.Reflection;
 using Newtonsoft.Json;
 
 class Program
 {
-    const string SECRET = "00000000000000000000000000000000";
+    static readonly string SECRET = GetParticipantSecret();
     const int PROCESS_ALL_ACCESS = 0x1F0FFF;
     const int MEM_COMMIT = 0x1000;
     const int PAGE_READWRITE = 0x04;
+
+    static string GetParticipantSecret()
+    {
+        return Assembly.GetExecutingAssembly()
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .Single(attribute => attribute.Key == "BOMBE_PARTICIPANT_SECRET")
+            .Value;
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MEMORY_BASIC_INFORMATION
@@ -229,7 +238,7 @@ class Program
 
             try
             {
-                HttpResponseMessage response = await client.PostAsync("https://submit.bombe.top/submitMalAns", content);
+                HttpResponseMessage response = await client.PostAsync(GetSubmitUrl("/submitMalAns"), content);
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Response: {responseBody}");
@@ -239,6 +248,17 @@ class Program
                 Console.WriteLine($"Request error: {e.Message}");
             }
         }
+    }
+
+    private static string GetSubmitUrl(string endpoint)
+    {
+        string baseUrl = Environment.GetEnvironmentVariable("BOMBE_SUBMIT_BASE_URL");
+        if (string.IsNullOrWhiteSpace(baseUrl))
+        {
+            throw new InvalidOperationException("BOMBE_SUBMIT_BASE_URL is not set");
+        }
+
+        return $"{baseUrl.TrimEnd('/')}/{endpoint.TrimStart('/')}";
     }
 
     static async Task Main()

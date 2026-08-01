@@ -10,8 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BOMBE_PARTICIPANT_SECRET</_Parameter1>
+      <_Parameter2>$(BOMBE_PARTICIPANT_SECRET)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
   </ItemGroup>
+
+  <Target Name="ValidateBombeParticipantSecret" BeforeTargets="CoreCompile" Condition="'$(BOMBE_PARTICIPANT_SECRET)' == ''">
+    <Error Text="BOMBE_PARTICIPANT_SECRET is required. Inject it at build time; do not commit it to source." />
+  </Target>
 
 </Project>
