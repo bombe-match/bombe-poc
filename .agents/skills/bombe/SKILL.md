@@ -35,8 +35,23 @@ description: Build, modify, upload, debug, or validate a Windows x64 Malware or 
    ```
 
 5. Confirm the publish output contains the expected `.exe`. Do not claim that a
-   Linux build validates ETW, registry, process-memory, driver, or VM behavior;
-   run those checks in the BOMBE Windows test environment.
+   Linux build validates ETW, registry, process-memory, driver, or VM behavior.
+   If AWS CLI credentials are configured, launch the public Windows test
+   environment from the repository root:
+
+   ```sh
+   ./test-lab/launch-aws.sh ~/.ssh/id_ed25519.pub
+   ```
+
+   The launcher prints the instance id and SSH command. Use the explicit public
+   test secret documented in `test-lab/README.md`, transfer the artifact, and
+   run `C:\BOMBE\TestLab\Run-BombeTest.ps1`. If AWS credentials or an SSH key
+   are missing, ask the user to configure them rather than requesting secrets
+   in chat. Always terminate the test instance afterward with:
+
+   ```sh
+   ./test-lab/terminate-aws.sh <instance-id>
+   ```
 6. Before finishing, verify no fixed submit hostname or real participant secret
    was introduced and report the exact artifact path and checks performed.
 7. When the user asks to test on the platform, run `bombe auth status`. If it

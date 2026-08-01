@@ -411,3 +411,6 @@ artifacts/
 cli/dist/
 cli/node_modules/
 cli/.test-dist/
+
+# Public test-lab bundle
+test-lab/dist/

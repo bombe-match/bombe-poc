@@ -65,6 +65,22 @@ docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
 The target VM provides the .NET runtime. Linux can build the executable, but
 Windows-specific behavior must still be tested in the published BOMBE test VM.
 
+## Test in the Windows playground
+
+The public playground AMI is `ami-0673d4903c39618b3` in `us-west-2`. If AWS CLI
+credentials are configured, launch it with a key-only SSH endpoint restricted
+to the caller's current IP:
+
+```sh
+./test-lab/launch-aws.sh ~/.ssh/id_ed25519.pub
+```
+
+Follow the printed SSH command, transfer the Windows executable, and run the
+local Test Lab with the documented test secret. See
+[`test-lab/README.md`](test-lab/README.md) for commands and cleanup. The Test
+Lab uses public diagnostics and is intentionally not a copy of production
+Battle orchestration, bots, or decoys.
+
 ## Upload from an AI coding agent
 
 The participant CLI uses the same Cognito login, upload API, screening path,
