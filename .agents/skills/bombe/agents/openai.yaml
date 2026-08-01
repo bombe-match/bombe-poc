@@ -1,0 +1,4 @@
+interface:
+  display_name: "BOMBE"
+  short_description: "Build and validate BOMBE participant binaries"
+  default_prompt: "Use $bombe to build and validate this BOMBE participant binary."
